@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,7 +17,10 @@ class _UploadPageState extends State<UploadPage> {
 
   _UploadPageState() {
     Firebase.initializeApp();
+    print("============================+++++++++++++++++++++++");
+    print(FirebaseAuth.instance.currentUser.email);
   }
+  String email = FirebaseAuth.instance.currentUser.email;
   File _image;
   bool isLoading;
   @override
@@ -32,9 +36,14 @@ class _UploadPageState extends State<UploadPage> {
 
     Future uploadPic(BuildContext context) async {
       var fileName = _image.path.split("/").last;
-      TaskSnapshot snapshot = await FirebaseStorage.instance.ref().child("images/$fileName").putFile(_image);
+      print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+      print(email);
+      TaskSnapshot snapshot = await FirebaseStorage.instance.ref().child("images/$email/$fileName").putFile(_image);
+      print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
       String downloadUrl = await snapshot.ref.getDownloadURL();
-      await FirebaseFirestore.instance.collection("images").add({"url": downloadUrl, "name": fileName});
+      print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+      print(downloadUrl);
+      await FirebaseFirestore.instance.collection("images").add({"url": downloadUrl, "name": email});
       setState(() {
         isLoading = false;
       });
