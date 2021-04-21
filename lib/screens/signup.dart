@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:insta_clone/screens/dashboard.dart';
 import 'package:insta_clone/service/firebase_service.dart';
 
 class SignupPage {

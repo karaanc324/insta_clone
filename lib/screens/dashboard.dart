@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:insta_clone/screens/login.dart';
 import 'package:insta_clone/screens/profile_page.dart';
 import 'package:insta_clone/screens/upload_page.dart';
 import 'package:insta_clone/service/firebase_service.dart';
@@ -19,8 +19,6 @@ class _DashboardState extends State<Dashboard> {
     print(user.email);
   }
   Widget widgetToShow;
-  bool _initialized = false;
-  bool _error = false;
   var _selectedIndex = 0; // this will be set when a new tab is tapped
   var firebaseService = FirebaseService();
 
@@ -33,23 +31,35 @@ class _DashboardState extends State<Dashboard> {
   Scaffold getDashboard() {
     return Scaffold(
       appBar: AppBar(
-        title: Text(""),
+        title: Text("SOCIO"),
+        actions: [
+          TextButton(
+              onPressed: () {
+                print("lohout");
+                FirebaseService().logout();
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage().getLoginPage(context)));
+                // Navigator.pop(context);
+                Navigator.popUntil(context, (Route<dynamic> predicate) => predicate.isFirst);
+
+              },
+              child: Icon(Icons.logout)),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
               icon: new Icon(Icons.home),
-              title: new Text('Home'),
+              label: 'Home',
               backgroundColor: Colors.red
 
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.add_a_photo),
-            title: new Text('Upload'),
+            label: 'Upload',
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.person),
-              title: Text('Profile')
+              label: 'Profile'
           )
         ],
         onTap: _onItemTapped,

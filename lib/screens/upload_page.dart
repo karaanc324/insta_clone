@@ -26,29 +26,6 @@ class _UploadPageState extends State<UploadPage> {
   @override
   Widget build(BuildContext context) {
 
-    Future getImage() async{
-      var image = await ImagePicker().getImage(source: ImageSource.gallery);
-
-      setState(() {
-        _image = File(image.path);
-      });
-    }
-
-    Future uploadPic(BuildContext context) async {
-      var fileName = _image.path.split("/").last;
-      print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-      print(email);
-      TaskSnapshot snapshot = await FirebaseStorage.instance.ref().child("images/$email/$fileName").putFile(_image);
-      print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-      String downloadUrl = await snapshot.ref.getDownloadURL();
-      print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-      print(downloadUrl);
-      await FirebaseFirestore.instance.collection("images").add({"url": downloadUrl, "name": email});
-      setState(() {
-        isLoading = false;
-      });
-    }
-
     return Scaffold(
       body: Builder(
         builder: (context) => Container(
@@ -103,4 +80,52 @@ class _UploadPageState extends State<UploadPage> {
       ),
     );
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Future getImage() async{
+    var image = await ImagePicker().getImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = File(image.path);
+    });
+  }
+
+  Future uploadPic(BuildContext context) async {
+    String name;
+    var fileName = _image.path.split("/").last;
+    print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+    print(email);
+    TaskSnapshot snapshot = await FirebaseStorage.instance.ref().child("images/$email/$fileName").putFile(_image);
+    print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+    print(downloadUrl);
+    await FirebaseFirestore.instance.collection("user_data").doc(email).get().then((value) => {
+      print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^6666"),
+      print(value.get("name")),
+      name = value.get("name"),
+    });
+    await FirebaseFirestore.instance.collection("images").add({"url": downloadUrl, "email": email, "name": name});
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+
+
+
+
 }

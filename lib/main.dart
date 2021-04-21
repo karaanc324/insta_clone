@@ -1,18 +1,7 @@
-import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:insta_clone/screens/home_page.dart';
-import 'package:insta_clone/screens/profile_page.dart';
-import 'package:insta_clone/screens/upload_page.dart';
 import 'package:insta_clone/screens/login.dart';
-import 'package:insta_clone/service/firebase_service.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_login/flutter_login.dart';
-
-
 
 void main() async{
   // await Firebase.initializeApp();
@@ -40,16 +29,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Image image;
-  // Widget widgetToShow;
-  // bool _initialized = false;
-  // bool _error = false;
-  var _selectedIndex = 0; // this will be set when a new tab is tapped
-  // var firebaseService = FirebaseService();
-  // String email;
-  // String password;
-
-
   @override
   void initState() {
     // TODO: implement initState
