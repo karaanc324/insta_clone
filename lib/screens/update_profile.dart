@@ -5,11 +5,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:insta_clone/screens/profile_page.dart';
+import 'package:insta_clone/screens/widgets.dart';
 import 'package:insta_clone/service/firebase_service.dart';
 
 import 'dashboard.dart';
 
 class UpdateProfile extends StatefulWidget {
+  String caller;
+  UpdateProfile(String caller) {
+    this.caller = caller;
+  }
   @override
   _UpdateProfileState createState() => _UpdateProfileState();
 }
@@ -35,21 +41,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 SizedBox(height: 20.0,),
                 Align(
                   alignment: Alignment.center,
-                  child: CircleAvatar(
-                    radius: 100,
-                    backgroundColor: Colors.blue,
-                    child: ClipOval(
-                      child: SizedBox(
-                          width: 180.0,
-                          height: 180.0,
-
-                          child:
-                          (_image != null)? Image.file(_image, fit: BoxFit.fill) :
-                          Image.network("https://i.wpimg.pl/730x0/m.gadzetomania.pl/14491711-b2c9fc651724f95e538e8e6.jpg", fit: BoxFit.fill,)
-                        // Image.file(_image)
-                      ),
-                    ),
-                  ),
+                  child: WidgetUtils().showSelectedImage(_image),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 1.0),
@@ -94,7 +86,11 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     firebaseService.updateProfile(context, _image, nameController.text, bioController.text, email);
                     Fluttertoast.showToast(msg: "updatinging...");
                     Fluttertoast.showToast(msg: "updated...");
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
+                    if(widget.caller == "ProfilePage") {
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
+                    }
                   },
                   elevation: 4.0,
                   child: Text('Submit'),

@@ -1,8 +1,6 @@
 import 'dart:io';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:insta_clone/screens/signup.dart';
 import 'package:insta_clone/screens/update_profile.dart';
 import 'package:insta_clone/service/firebase_service.dart';
@@ -15,7 +13,6 @@ class LoginPage {
   // }
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  // FirebaseService firebaseService;
   File _image;
 
   Padding getLoginPage(BuildContext context) {
@@ -83,13 +80,10 @@ class LoginPage {
                     print(authSuccess);
                     if (authSuccess) {
                       bool profileValid = await FirebaseService().isProfileUpdated(nameController.text);
-                      print("44444444444444444");
                       if (profileValid) {
-                        print("55555555555555555555");
                         Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
                       } else {
-                        print("6666666666666666");
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProfile()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProfile("LoginPage")));
                       }
                     }
                     // Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProfile()));
@@ -115,43 +109,4 @@ class LoginPage {
           ],
         ));
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // Future getImage() async{
-  //   var image = await ImagePicker().getImage(source: ImageSource.gallery);
-  //
-  //   setState(() {
-  //     _image = File(image.path);
-  //   });
-  // }
-  //
-  // Future uploadPic(BuildContext context) async {
-  //   var fileName = _image.path.split("/").last;
-  //   print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-  //   print(email);
-  //   TaskSnapshot snapshot = await FirebaseStorage.instance.ref().child("images/$email/$fileName").putFile(_image);
-  //   print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-  //   String downloadUrl = await snapshot.ref.getDownloadURL();
-  //   print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-  //   print(downloadUrl);
-  //   await FirebaseFirestore.instance.collection("images").add({"url": downloadUrl, "name": email});
-  //   setState(() {
-  //     isLoading = false;
-  //   });
-  // }
 }

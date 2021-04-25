@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:insta_clone/screens/widgets.dart';
 class UploadPage extends StatefulWidget {
   @override
   _UploadPageState createState() => _UploadPageState();
@@ -34,19 +35,7 @@ class _UploadPageState extends State<UploadPage> {
               SizedBox(height: 20.0,),
               Align(
                 alignment: Alignment.center,
-                child: CircleAvatar(
-                  radius: 100,
-                  backgroundColor: Colors.blue,
-                  child: ClipOval(
-                    child: SizedBox(
-                        width: 180.0,
-                        height: 180.0,
-
-                        child: (_image != null)? Image.file(_image, fit: BoxFit.fill) :
-                        Image.network("https://i.wpimg.pl/730x0/m.gadzetomania.pl/14491711-b2c9fc651724f95e538e8e6.jpg", fit: BoxFit.fill,)
-                    ),
-                  ),
-                ),
+                child: WidgetUtils().showSelectedImage(_image),
               ),
               Padding(
                 padding: EdgeInsets.only(top: 1.0),
@@ -80,19 +69,6 @@ class _UploadPageState extends State<UploadPage> {
       ),
     );
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   Future getImage() async{
