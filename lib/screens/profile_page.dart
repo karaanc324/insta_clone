@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:insta_clone/screens/image_dashboard.dart';
 import 'dart:io';
 
 import 'package:insta_clone/screens/update_profile.dart';
-
+import 'package:insta_clone/service/firebase_service.dart';
 
 class ProfilePageWidget extends StatefulWidget {
   @override
@@ -15,13 +17,14 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
   _ProfilePageWidgetState() {}
 
   String email = FirebaseAuth.instance.currentUser.email;
-  User user =  FirebaseAuth.instance.currentUser;
+  User user = FirebaseAuth.instance.currentUser;
   get orientation => null;
   File _image;
   String url;
   String name;
   String bio;
   List<String> images = [];
+  List menuItems = ["Delete"];
 
   @override
   void initState() {
@@ -36,62 +39,69 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
+    return Column(
       children: [
-             Container(
-              child:
-                  Container(
-                    child: FutureBuilder(
-                      future: getUserData(),
-                      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if(snapshot.connectionState == ConnectionState.done) {
-                          return Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 100,
-                                backgroundColor: Colors.blue,
-                                child: ClipOval(
-                                  child: SizedBox(
-                                      width: 180.0,
-                                      height: 180.0,
-
-                                      child:
-                                      // Image.network(url)
-                                      (url != null)? Image.network(url, fit: BoxFit.fill) :
-                                      Image.network("https://i.wpimg.pl/730x0/m.gadzetomania.pl/14491711-b2c9fc651724f95e538e8e6.jpg", fit: BoxFit.fill,)
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    name != null?
-                                    Text(name, style: TextStyle(
-                                        fontSize: 30
-                                    ),) : Text("Refresh Please"),
-                                    bio != null?
-                                    Text(bio, style: TextStyle(
-                                        fontSize: 20
-                                    ),) : Text("Refresh Please"),
-                                    TextButton(
-                                        onPressed: () {
-                                          print(email);
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProfile("ProfilePage")));
-                                        },
-                                        child: Text("Edit Profile"))
-                                  ],
-                                ),
-                              )
-                            ],
-                          );
-
-                        }
-                        return CircularProgressIndicator();
-                      },
+        Container(
+          child: Container(
+              child: FutureBuilder(
+            future: getUserData(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 100,
+                      backgroundColor: Colors.blue,
+                      child: ClipOval(
+                        child: SizedBox(
+                            width: 180.0,
+                            height: 180.0,
+                            child:
+                                // Image.network(url)
+                                (url != null)
+                                    ? Image.network(url, fit: BoxFit.fill)
+                                    : Image.network(
+                                        "https://i.wpimg.pl/730x0/m.gadzetomania.pl/14491711-b2c9fc651724f95e538e8e6.jpg",
+                                        fit: BoxFit.fill,
+                                      )),
+                      ),
+                    ),
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          name != null
+                              ? Text(
+                                  name,
+                                  style: TextStyle(fontSize: 30),
+                                )
+                              : Text("Refresh Please"),
+                          bio != null
+                              ? Text(
+                                  bio,
+                                  style: TextStyle(fontSize: 20),
+                                )
+                              : Text("Refresh Please"),
+                          TextButton(
+                              onPressed: () {
+                                print(email);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            UpdateProfile("ProfilePage")));
+                              },
+                              child: Text("Edit Profile"))
+                        ],
+                      ),
                     )
-                  ),
-            ),
+                  ],
+                );
+              }
+              return CircularProgressIndicator();
+            },
+          )),
+        ),
         SizedBox(
           height: 50,
           width: 50,
@@ -101,24 +111,79 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
             child: FutureBuilder(
               future: getUserImages(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if(snapshot.connectionState == ConnectionState.done) {
-                return GridView.builder(
-                    itemCount: calcLength(snapshot.data.docs),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3),
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        child: GridTile(
-                          // child: Image.network(snapshot.data.docs[index].data()["url"], fit: BoxFit.fill,),
-                          child: Image.network(images[index]),
-                        ),
-                      );
-                    }
-                );
-              } else if (snapshot.connectionState == ConnectionState.none) {
-                return Text("No data");
-              }
-              return CircularProgressIndicator();
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return GridView.builder(
+                      itemCount: calcLength(snapshot.data.docs),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount:
+                              (orientation == Orientation.portrait) ? 2 : 3),
+                      itemBuilder: (BuildContext context, int index) {
+                        return Card(
+                          child: InkResponse(
+                            // child: Image.network(snapshot.data.docs[index].data()["url"], fit: BoxFit.fill,),
+                            child: Image.network(images[index]),
+                            onLongPress: () {
+                              // showDialog(context: context, builder: (context) => AlertDialog(
+                              //   content: TextButton(
+                              //     child: Text("Delete"),
+                              //   ),
+                              // ));
+                              print("long press");
+                            },
+                            onTap: () {
+                              print("lolol");
+                              // Navigator.push(context, MaterialPageRoute(builder: (context) => ImageDashboard()));
+                              // Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageDashboard()));
+                              showDialog<void>(
+                                barrierDismissible: true,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return new Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.all(0),
+                                        child: new Container(
+                                          height: 500,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          color: Colors.grey,
+                                          child: new Column(
+                                            children: <Widget>[
+                                              Image.network(images[index]),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    print(
+                                                        "====================");
+                                                    print(images[index]);
+                                                    setState(() {
+                                                      FirebaseService()
+                                                          .delete(images[index])
+                                                          .then((value) => {
+                                                                images.remove(
+                                                                    images[
+                                                                        index])
+                                                              });
+                                                    });
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text("Delete")),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        );
+                      });
+                } else if (snapshot.connectionState == ConnectionState.none) {
+                  return Text("No data");
+                }
+                return CircularProgressIndicator();
               },
             ),
           ),
@@ -130,12 +195,16 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
   getUserData() {
     print("++++++++++++++++++++++++++++++++++++++");
     setState(() {
-      var lol = FirebaseFirestore.instance.collection("user_data").doc(email).get().then((value) => {
-        print(value["url"]),
-        url = value["url"],
-        name = value["name"],
-        bio = value["bio"],
-      });
+      var lol = FirebaseFirestore.instance
+          .collection("user_data")
+          .doc(email)
+          .get()
+          .then((value) => {
+                print(value["url"]),
+                url = value["url"],
+                name = value["name"],
+                bio = value["bio"],
+              });
     });
     return FirebaseFirestore.instance.collection("user_data").get();
   }

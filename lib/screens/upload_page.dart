@@ -72,7 +72,7 @@ class _UploadPageState extends State<UploadPage> {
 
 
   Future getImage() async{
-    var image = await ImagePicker().getImage(source: ImageSource.gallery);
+    var image = await ImagePicker().getImage(source: ImageSource.gallery, maxHeight: 500, maxWidth: 450);
 
     setState(() {
       _image = File(image.path);

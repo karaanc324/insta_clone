@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as Path;
 
 class FirebaseService extends ChangeNotifier {
   FirebaseService() {
@@ -18,12 +19,10 @@ class FirebaseService extends ChangeNotifier {
   File _image;
   bool isLoading;
 
-   registerUser(String email, String password) async {
+  registerUser(String email, String password) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email,
-          password: password
-      );
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
       print("------------------------------");
       return true;
       // print(userCredential.user.email);
@@ -33,23 +32,20 @@ class FirebaseService extends ChangeNotifier {
         Fluttertoast.showToast(msg: "The password provided is too weak.");
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
-        Fluttertoast.showToast(msg: "The account already exists for that email.");
+        Fluttertoast.showToast(
+            msg: "The account already exists for that email.");
       }
     } catch (e) {
       print(e);
     }
-
   }
 
   login(String email, String password) async {
-
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password
-      );
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
       print("------------------------------");
-      if(userCredential != null) {
+      if (userCredential != null) {
         return true;
       }
       // print(userCredential.user.email);
@@ -63,27 +59,28 @@ class FirebaseService extends ChangeNotifier {
   }
 
   isProfileUpdated(email) async {
-     bool exists;
+    bool exists;
     // todo
     // if (FirebaseFirestore.instance.collection("user_data").doc(email).get() != null) {
     //   return true;
     // } else {
     //   return false;
     // }
-     print("111111111111");
-    await FirebaseFirestore.instance.collection("user_data").doc(email).get().then((doc) => {
-      if (doc.exists) {
-        print("2222222222222"),
-        exists = true
-      } else {
-        print("3333333333333"),
-        exists = false
-    }
-    });
+    print("111111111111");
+    await FirebaseFirestore.instance
+        .collection("user_data")
+        .doc(email)
+        .get()
+        .then((doc) => {
+              if (doc.exists)
+                {print("2222222222222"), exists = true}
+              else
+                {print("3333333333333"), exists = false}
+            });
     return exists;
   }
 
-  Future getImage() async{
+  Future getImage() async {
     var image = await ImagePicker().getImage(source: ImageSource.gallery);
 
     // setState(() {
@@ -104,16 +101,51 @@ class FirebaseService extends ChangeNotifier {
   //   await FirebaseFirestore.instance.collection("images").add({"url": downloadUrl, "name": email});
   // }
 
-  Future updateProfile(BuildContext context, File image, String name, String bio, String email) async {
+  Future updateProfile(BuildContext context, File image, String name,
+      String bio, String email) async {
     var fileName = image.path.split("/").last;
     print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
     print(email);
-    TaskSnapshot snapshot = await FirebaseStorage.instance.ref().child("profile/$email/$fileName").putFile(image);
+    TaskSnapshot snapshot = await FirebaseStorage.instance
+        .ref()
+        .child("profile/$email/$fileName")
+        .putFile(image);
     print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
     String downloadUrl = await snapshot.ref.getDownloadURL();
     print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
     print(downloadUrl);
-    await FirebaseFirestore.instance.collection("user_data").doc(email).set({"url": downloadUrl, "email": email, "name": name, "bio": bio});
+    await FirebaseFirestore.instance
+        .collection("user_data")
+        .doc(email)
+        .set({"url": downloadUrl, "email": email, "name": name, "bio": bio});
+  }
+
+  Future<void> delete(String imageFileUrl) async {
+    var fileUrl = Uri.decodeFull(Path.basename(imageFileUrl))
+        .replaceAll(new RegExp(r'(\?alt).*'), '');
+    // final StorageReference firebaseStorageRef =
+    FirebaseStorage.instance.ref().child(fileUrl).delete();
+    var lol = FirebaseFirestore.instance
+        .collection("images")
+        .where('url', isEqualTo: imageFileUrl)
+        .get()
+        .then((value) => {
+              for (DocumentSnapshot ds in value.docs)
+                {
+                  ds.reference.delete()
+                  // print(ds.reference);
+                }
+            });
+
+    // await firebaseStorageRef.delete();
+
+    // var fileUrl = Uri.decodeFull(imag).replaceAll(new RegExp(r'(\?alt).*'), '');
+    // print("999999999999999999999999999");
+    // print(fileUrl);
+    // print(imag + "lol");
+    // print(FirebaseStorage.instance.refFromURL(fileUrl));
+    // print(FirebaseStorage.instance.refFromURL(fileUrl).fullPath);
+    // await FirebaseStorage.instance.refFromURL(imag).delete();
   }
 }
 

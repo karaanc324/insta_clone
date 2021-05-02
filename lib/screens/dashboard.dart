@@ -31,6 +31,8 @@ class _DashboardState extends State<Dashboard> {
   Scaffold getDashboard() {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        automaticallyImplyLeading: false,
         title: Text("SOCIO"),
         actions: [
           TextButton(
@@ -39,8 +41,8 @@ class _DashboardState extends State<Dashboard> {
                 FirebaseService().logout();
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage().getLoginPage(context)));
                 // Navigator.pop(context);
-                Navigator.popUntil(context, (Route<dynamic> predicate) => predicate.isFirst);
-
+                Navigator.popUntil(
+                    context, (Route<dynamic> predicate) => predicate.isFirst);
               },
               child: Icon(Icons.logout)),
         ],
@@ -50,17 +52,12 @@ class _DashboardState extends State<Dashboard> {
           BottomNavigationBarItem(
               icon: new Icon(Icons.home),
               label: 'Home',
-              backgroundColor: Colors.red
-
-          ),
+              backgroundColor: Colors.red),
           BottomNavigationBarItem(
             icon: new Icon(Icons.add_a_photo),
             label: 'Upload',
           ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile'
-          )
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
         ],
         onTap: _onItemTapped,
         selectedItemColor: Colors.blue,
@@ -82,11 +79,9 @@ class _DashboardState extends State<Dashboard> {
     print(_selectedIndex);
     if (index == 0) {
       widgetToShow = MainPageWidget();
-    }
-    else if (index == 1) {
+    } else if (index == 1) {
       widgetToShow = UploadPage();
-    }
-    else if ( index == 2) {
+    } else if (index == 2) {
       widgetToShow = ProfilePageWidget();
     }
   }
