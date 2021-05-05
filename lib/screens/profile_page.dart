@@ -43,14 +43,14 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
       children: [
         Container(
           child: Container(
-              child: FutureBuilder(
-            future: getUserData(),
+              child: StreamBuilder(
+            stream: getUserData(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
                 return Row(
                   children: [
                     CircleAvatar(
-                      radius: 100,
+                      radius: 70,
                       backgroundColor: Colors.blue,
                       child: ClipOval(
                         child: SizedBox(
@@ -58,27 +58,32 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                             height: 180.0,
                             child:
                                 // Image.network(url)
-                                (url != null)
-                                    ? Image.network(url, fit: BoxFit.fill)
+                                (snapshot.data.docs[0].data()["url"] != null)
+                                    ? Image.network(
+                                        snapshot.data.docs[0].data()["url"],
+                                        fit: BoxFit.fill)
                                     : Image.network(
                                         "https://i.wpimg.pl/730x0/m.gadzetomania.pl/14491711-b2c9fc651724f95e538e8e6.jpg",
                                         fit: BoxFit.fill,
                                       )),
                       ),
                     ),
+                    SizedBox(
+                      width: 10,
+                    ),
                     Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          name != null
+                          snapshot.data.docs[0].data()["name"] != null
                               ? Text(
-                                  name,
+                                  snapshot.data.docs[0].data()["name"],
                                   style: TextStyle(fontSize: 30),
                                 )
                               : Text("Refresh Please"),
-                          bio != null
+                          snapshot.data.docs[0].data()["url"] != null
                               ? Text(
-                                  bio,
+                                  snapshot.data.docs[0].data()["bio"],
                                   style: TextStyle(fontSize: 20),
                                 )
                               : Text("Refresh Please"),
@@ -206,11 +211,10 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                 bio = value["bio"],
               });
     });
-    return FirebaseFirestore.instance.collection("user_data").get();
+    return FirebaseFirestore.instance.collection("user_data").snapshots();
   }
 
   getUserImages() {
-    print("getUserimages========================");
     return FirebaseFirestore.instance.collection("images").get();
   }
 

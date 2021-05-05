@@ -60,7 +60,7 @@ class LoginPage {
               ),
             ),
             TextButton(
-              onPressed: (){
+              onPressed: () {
                 //forgot password screen
               },
               child: Text('Forgot Password'),
@@ -73,17 +73,25 @@ class LoginPage {
                   color: Colors.blue,
                   child: Text('Login'),
                   onPressed: () async {
-
                     print(nameController.text);
                     print(passwordController.text);
-                    bool authSuccess = await FirebaseService().login(nameController.text, passwordController.text);
+                    bool authSuccess = await FirebaseService()
+                        .login(nameController.text, passwordController.text);
                     print(authSuccess);
                     if (authSuccess) {
-                      bool profileValid = await FirebaseService().isProfileUpdated(nameController.text);
+                      bool profileValid = await FirebaseService()
+                          .isProfileUpdated(nameController.text);
                       if (profileValid) {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Dashboard()));
                       } else {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProfile("LoginPage")));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    UpdateProfile("LoginPage")));
                       }
                     }
                     // Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProfile()));
@@ -91,21 +99,25 @@ class LoginPage {
                 )),
             Container(
                 child: Row(
-                  children: <Widget>[
-                    Text('Does not have account?'),
-                    FlatButton(
-                      textColor: Colors.blue,
-                      child: Text(
-                        'Sign Up',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SignupPage().getSignupPage(context)));
-                      },
-                    )
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                ))
+              children: <Widget>[
+                Text('Does not have account?'),
+                FlatButton(
+                  textColor: Colors.blue,
+                  child: Text(
+                    'Sign Up',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SignupPage().getSignupPage(context)));
+                  },
+                )
+              ],
+              mainAxisAlignment: MainAxisAlignment.center,
+            ))
           ],
         ));
   }

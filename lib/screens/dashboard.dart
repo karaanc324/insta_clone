@@ -18,7 +18,7 @@ class _DashboardState extends State<Dashboard> {
     User user = FirebaseAuth.instance.currentUser;
     print(user.email);
   }
-  Widget widgetToShow;
+  Widget widgetToShow = MainPageWidget();
   var _selectedIndex = 0; // this will be set when a new tab is tapped
   var firebaseService = FirebaseService();
 

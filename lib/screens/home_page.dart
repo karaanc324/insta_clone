@@ -6,20 +6,34 @@ import 'package:flutter/rendering.dart';
 
 class MainPageWidget extends StatelessWidget {
   MainPageWidget() {
+    // getImages();
+    // build(context);
     Firebase.initializeApp();
   }
 
   getImages() {
-    return FirebaseFirestore.instance.collection("images").get();
+    // getStream();
+    return FirebaseFirestore.instance.collection("images").snapshots();
+  }
+
+  getStream() async {
+    print(
+        "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\getstream");
+    await for (var snapshot
+        in FirebaseFirestore.instance.collection("images").snapshots()) {
+      for (var message in snapshot.docs) {
+        print(message.data());
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: FutureBuilder(
-        future: getImages(),
+      child: StreamBuilder(
+        stream: getImages(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
             return ListView.builder(
               shrinkWrap: true,
               itemCount: snapshot.data.docs.length,
@@ -45,7 +59,7 @@ class MainPageWidget extends StatelessWidget {
                       ),
                       ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        child: snapshot.data.docs[index] != null
+                        child: snapshot.hasData
                             ? Image.network(
                                 snapshot.data.docs[index].data()["url"])
                             : CircularProgressIndicator(),
@@ -64,10 +78,9 @@ class MainPageWidget extends StatelessWidget {
                 );
               },
             );
-          } else if (snapshot.connectionState == ConnectionState.none) {
-            return Text("No data");
+          } else {
+            return CircularProgressIndicator();
           }
-          return CircularProgressIndicator();
         },
       ),
     );
